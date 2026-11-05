@@ -4,8 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Learning Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+    <!-- แจ้งเตือน -->
+    <div aria-live="polite"></div>
+
+    <!-- สร้าง Port ใหญ่-->
+    <nav>
+        <div>
+            <a href="#"> Power Up! <span>Learning Portfolio</span></a>
+            <div>
+                <button>โหลดข้อมูลตัวอย่าง</button>
+                <button>ล้างข้อมูลทั้งหมด</button>
+            </div>
+        </div>
+    </nav>
+
+    <div>
+        <div>
+
+            <!-- แถบจัดการข้อมูล -->
+            <div>
+                <div>
+                    <h5>Portfolios <span>0</span></h5>
+                    <div></div>
+
+                    <hr>
+
+                    <h6>สร้าง Portfolio ใหม่</h6>
+                    <form novalidate>
+                        <div>
+                            <label>ชื่อที่ต้องการแสดง *</label>
+                            <input type="text" name="name" required
+                                placeholder="ชื่อจริง หรือชื่อสมมติ">
+                            <div></div>
+                        </div>
+                        <div>
+                            <label>What I Enjoy *</label>
+                            <textarea name="enjoy" rows="2" required
+                                placeholder="ชอบทำอะไร..."></textarea>
+                            <div></div>
+                        </div>
+                        <div>
+                            <label>What I've Tried *</label>
+                            <textarea name="tried" rows="2" required
+                                placeholder="ลองทำอะไรมาแล้วบ้าง..."></textarea>
+                            <div></div>
+                        </div>
+                        <div>
+                            <label>What I'm Curious About *</label>
+                            <textarea name="curious" rows="2" required
+                                placeholder="สนใจอยากรู้อะไรเพิ่ม..."></textarea>
+                            <div></div>
+                        </div>
+                        <button type="submit">สร้าง Portfolio</button>
+                    </form>
+                </div>
+            </div>
 </body>
 </html>
