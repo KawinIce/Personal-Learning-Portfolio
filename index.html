@@ -10,10 +10,10 @@
     <!-- แจ้งเตือน -->
     <div aria-live="polite"></div>
 
-    <!-- สร้าง Port ใหญ่-->
+    <!-- สร้าง Port ใหม่-->
     <nav>
         <div>
-            <a href="#"> Power Up! <span>Learning Portfolio</span></a>
+            <a href="#"> Welcome!<span>Learning Portfolio</span></a>
             <div>
                 <button>โหลดข้อมูลตัวอย่าง</button>
                 <button>ล้างข้อมูลทั้งหมด</button>
@@ -62,5 +62,157 @@
                     </form>
                 </div>
             </div>
+            <!-- Main Content -->
+            <div>
+
+                <!-- ที่ว่างรอข้อมูล -->
+                <div>
+                    <div>
+                        <h4>ยังไม่มี Portfolio</h4>
+                        <p>สร้าง Portfolio ทางซ้าย หรือกด “โหลดข้อมูลตัวอย่าง” ด้านบนเพื่อเริ่มต้นใช้งาน</p>
+                    </div>
+                </div>
+
+                <!-- ลายละเอียด -->
+                <div style="display: none;">
+
+                    <!-- Profile กับ Card -->
+                    <div>
+                        <div>
+                            <h3>-</h3>
+                            <button>ลบ Portfolio</button>
+                        </div>
+                        <div>
+                            <div>
+                                <strong>WHAT I ENJOY</strong>
+                                <span>-</span>
+                            </div>
+                            <div>
+                                <strong>WHAT I'VE TRIED</strong>
+                                <span>-</span>
+                            </div>
+                            <div>
+                                <strong>WHAT I'M CURIOUS ABOUT</strong>
+                                <span>-</span>
+                            </div>
+                        </div>
+
+                        <!-- JSON -->
+                        <div>
+                            <button>แสดง/ซ่อน JSON</button>
+                            <button>คัดลอก JSON</button>
+                        </div>
+                        <div hidden>
+                            <textarea rows="8" readonly></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Port Items -->
+                    <div>
+                        <h5>Portfolio Items <span>0</span></h5>
+                        <div></div>
+                    </div>
+
+                    <!-- เพิ่ม Port -->
+                    <div>
+                        <h5>เพิ่ม Portfolio Item</h5>
+                        <form novalidate>
+                            <div>
+                                <div>
+                                    <label>Title *</label>
+                                    <input type="text" name="title" required
+                                        placeholder="ชื่อผลงานหรือกิจกรรม">
+                                    <div></div>
+                                </div>
+                                <div>
+                                    <label>Type *</label>
+                                    <select name="type" required>
+                                        <option value="">-- เลือกประเภท --</option>
+                                        <option value="Course Assignment">Course Assignment</option>
+                                        <option value="Project">Project</option>
+                                        <option value="Activity">Activity</option>
+                                        <option value="Self-Learning">Self-Learning</option>
+                                    </select>
+                                    <div></div>
+                                </div>
+                                <div>
+                                    <label>Date *</label>
+                                    <input type="date" name="date" required>
+                                    <div></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div>
+                                    <label>Role *</label>
+                                    <input type="text" name="role" required
+                                        placeholder="เช่น Developer, Designer">
+                                    <div></div>
+                                </div>
+                                <div>
+                                    <label>Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                                    <input type="text" name="skills" required
+                                        placeholder="HTML, CSS, JavaScript">
+                                    <div></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label>Description *</label>
+                                <textarea name="description" rows="2" required
+                                    placeholder="รายละเอียดภาพรวมของผลงาน..."></textarea>
+                                <div></div>
+                            </div>
+
+                            <!-- Reflection -->
+                            <div>
+                                <h6>Reflection</h6>
+                                <div>
+                                    <div>
+                                        <label>What I did *</label>
+                                        <input type="text" name="whatIDid" required
+                                            placeholder="สิ่งที่ได้ทำ">
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <label>What I learned *</label>
+                                        <input type="text" name="whatILearned"
+                                            required placeholder="สิ่งที่ได้เรียนรู้">
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <label>Challenge *</label>
+                                        <input type="text" name="challenge" required
+                                            placeholder="อุปสรรคหรือความท้าทาย">
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <label>Next step *</label>
+                                        <input type="text" name="nextStep" required
+                                            placeholder="ก้าวต่อไป">
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label>Evidence URL * (ลิงก์หลักฐาน)</label>
+                                <textarea name="evidence" rows="2" required
+                                    placeholder="https://example.com/my-work"></textarea>
+                                <div></div>
+                            </div>
+
+                            <div>
+                                <button type="submit">บันทึก Item</button>
+                                <button type="reset">ล้างฟอร์ม</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>
