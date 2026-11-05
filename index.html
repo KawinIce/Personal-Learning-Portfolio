@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
     <!-- แจ้งเตือน -->
@@ -20,7 +21,7 @@
     <nav class="navbar navbar-dark shadow-sm py-3 mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4" href="#">
-                Welcome!
+                Welcome
                 <span class="fw-light fs-6 text-light opacity-75">Learning Portfolio</span>
             </a>
             <div class="d-flex gap-2">
@@ -52,25 +53,29 @@
 
                         <div class="mb-3">
                             <label for="name" class="form-label small fw-semibold">ชื่อที่ต้องการแสดง *</label>
-                            <input type="text" class="form-control" id="name" name="name" required placeholder="ชื่อจริง หรือชื่อสมมติ">
+                            <input type="text" class="form-control" id="name" name="name" required
+                                placeholder="ชื่อจริง หรือชื่อสมมติ">
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="enjoy" class="form-label small fw-semibold">What I Enjoy *</label>
-                            <textarea class="form-control" id="enjoy" name="enjoy" rows="2" required placeholder="ชอบทำอะไร..."></textarea>
+                            <textarea class="form-control" id="enjoy" name="enjoy" rows="2" required
+                                placeholder="ชอบทำอะไร..."></textarea>
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="tried" class="form-label small fw-semibold">What I've Tried *</label>
-                            <textarea class="form-control" id="tried" name="tried" rows="2" required placeholder="ลองทำอะไรมาแล้วบ้าง..."></textarea>
+                            <textarea class="form-control" id="tried" name="tried" rows="2" required
+                                placeholder="ลองทำอะไรมาแล้วบ้าง..."></textarea>
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="curious" class="form-label small fw-semibold">What I'm Curious About *</label>
-                            <textarea class="form-control" id="curious" name="curious" rows="2" required placeholder="สนใจอยากรู้อะไรเพิ่ม..."></textarea>
+                            <textarea class="form-control" id="curious" name="curious" rows="2" required
+                                placeholder="สนใจอยากรู้อะไรเพิ่ม..."></textarea>
                             <div class="invalid-feedback"></div>
                         </div>
 
@@ -78,14 +83,15 @@
                     </form>
                 </div>
             </div>
-<!-- Main Content -->
+            <!-- Main Content -->
             <div class="col-lg-8">
 
                 <!-- Empty State -->
                 <div id="empty-state" class="card text-center p-5 shadow-sm">
                     <div class="py-5">
                         <h4 class="text-muted mb-2">ยังไม่มี Portfolio</h4>
-                        <p class="text-secondary small">สร้าง Portfolio ทางซ้าย หรือกด “โหลดข้อมูลตัวอย่าง” ด้านบนเพื่อเริ่มต้นใช้งาน</p>
+                        <p class="text-secondary small">สร้าง Portfolio ทางซ้าย หรือกด “โหลดข้อมูลตัวอย่าง”
+                            ด้านบนเพื่อเริ่มต้นใช้งาน</p>
                     </div>
                 </div>
 
@@ -95,7 +101,8 @@
                     <div class="card p-4 mb-4 bg-white shadow-sm">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 id="v-name" class="text-dark fw-bold m-0">-</h3>
-                            <button class="btn btn-outline-danger btn-sm" id="btn-delete-portfolio">ลบ Portfolio</button>
+                            <button class="btn btn-outline-danger btn-sm" id="btn-delete-portfolio">ลบ
+                                Portfolio</button>
                         </div>
 
                         <div class="row g-3 small bg-light p-3 rounded-3 mb-4">
@@ -120,7 +127,8 @@
                         </div>
 
                         <div id="json-box" class="mt-2" hidden>
-                            <textarea class="form-control font-monospace bg-dark text-light" id="json-text" rows="8" readonly></textarea>
+                            <textarea class="form-control font-monospace bg-dark text-light" id="json-text" rows="8"
+                                readonly></textarea>
                         </div>
                     </div>
 
@@ -142,7 +150,8 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label for="title" class="form-label small fw-semibold">Title *</label>
-                                    <input type="text" class="form-control" id="title" name="title" required placeholder="ชื่อผลงานหรือกิจกรรม">
+                                    <input type="text" class="form-control" id="title" name="title" required
+                                        placeholder="ชื่อผลงานหรือกิจกรรม">
                                     <div class="invalid-feedback"></div>
                                 </div>
 
@@ -168,112 +177,114 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label for="role" class="form-label small fw-semibold">Role *</label>
-                                    <input type="text" class="form-control" id="role" name="role" required placeholder="เช่น Developer, Designer">
+                                    <input type="text" class="form-control" id="role" name="role" required
+                                        placeholder="เช่น Developer, Designer">
                                     <div class="invalid-feedback"></div>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="skills" class="form-label small fw-semibold">Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
-                                    <input type="text" class="form-control" id="skills" name="skills" required placeholder="HTML, CSS, JavaScript">
+                                    <label for="skills" class="form-label small fw-semibold">Skills *
+                                        (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                                    <input type="text" class="form-control" id="skills" name="skills" required
+                                        placeholder="HTML, CSS, JavaScript">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="description" class="form-label small fw-semibold">Description *</label>
-                                <textarea class="form-control" id="description" name="description" rows="2" required placeholder="รายละเอียดภาพรวมของผลงาน..."></textarea>
+                                <textarea class="form-control" id="description" name="description" rows="2" required
+                                    placeholder="รายละเอียดภาพรวมของผลงาน..."></textarea>
                                 <div class="invalid-feedback"></div>
                             </div>
 
-            
-<!-- Reflection -->
-<div class="p-3 bg-light rounded-3 mb-3">
-    <h6 class="small fw-bold text-secondary mb-3">Reflection</h6>
 
-    <div class="row g-3">
+                            <!-- Reflection -->
+                            <div class="p-3 bg-light rounded-3 mb-3">
+                                <h6 class="small fw-bold text-secondary mb-3">Reflection</h6>
 
-        <div class="col-md-6">
-            <label for="whatIDid" class="form-label small text-muted">
-                What I did *
-            </label>
-            <input type="text" class="form-control" id="whatIDid"
-                name="whatIDid" required placeholder="สิ่งที่ได้ทำ">
-            <div class="invalid-feedback"></div>
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label for="whatIDid" class="form-label small text-muted">
+                                            What I did *
+                                        </label>
+                                        <input type="text" class="form-control" id="whatIDid" name="whatIDid" required
+                                            placeholder="สิ่งที่ได้ทำ">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="whatILearned" class="form-label small text-muted">
+                                            What I learned *
+                                        </label>
+                                        <input type="text" class="form-control" id="whatILearned" name="whatILearned"
+                                            required placeholder="สิ่งที่ได้เรียนรู้">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="challenge" class="form-label small text-muted">
+                                            Challenge *
+                                        </label>
+                                        <input type="text" class="form-control" id="challenge" name="challenge" required
+                                            placeholder="อุปสรรคหรือความท้าทาย">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="nextStep" class="form-label small text-muted">
+                                            Next step *
+                                        </label>
+                                        <input type="text" class="form-control" id="nextStep" name="nextStep" required
+                                            placeholder="ก้าวต่อไป">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Evidence -->
+                            <div class="mb-3">
+                                <label for="evidence" class="form-label small fw-semibold">
+                                    Evidence URL * (ลิงก์หลักฐาน)
+                                </label>
+
+                                <textarea class="form-control" id="evidence" name="evidence" rows="2" required
+                                    placeholder="https://example.com/my-work"></textarea>
+
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-flex gap-2">
+
+                                <button type="submit" class="btn btn-success flex-grow-1 shadow-sm">
+                                    บันทึก Item
+                                </button>
+
+                                <button type="reset" class="btn btn-outline-secondary" id="item-reset">
+                                    ล้างฟอร์ม
+                                </button>
+
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-
-        <div class="col-md-6">
-            <label for="whatILearned" class="form-label small text-muted">
-                What I learned *
-            </label>
-            <input type="text" class="form-control" id="whatILearned"
-                name="whatILearned" required placeholder="สิ่งที่ได้เรียนรู้">
-            <div class="invalid-feedback"></div>
-        </div>
-
-        <div class="col-md-6">
-            <label for="challenge" class="form-label small text-muted">
-                Challenge *
-            </label>
-            <input type="text" class="form-control" id="challenge"
-                name="challenge" required placeholder="อุปสรรคหรือความท้าทาย">
-            <div class="invalid-feedback"></div>
-        </div>
-
-        <div class="col-md-6">
-            <label for="nextStep" class="form-label small text-muted">
-                Next step *
-            </label>
-            <input type="text" class="form-control" id="nextStep"
-                name="nextStep" required placeholder="ก้าวต่อไป">
-            <div class="invalid-feedback"></div>
-        </div>
-
     </div>
-</div>
 
-<!-- Evidence -->
-<div class="mb-3">
-    <label for="evidence" class="form-label small fw-semibold">
-        Evidence URL * (ลิงก์หลักฐาน)
-    </label>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <textarea class="form-control" id="evidence"
-        name="evidence" rows="2" required
-        placeholder="https://example.com/my-work"></textarea>
-
-    <div class="invalid-feedback"></div>
-</div>
-
-<!-- Buttons -->
-<div class="d-flex gap-2">
-
-    <button type="submit"
-        class="btn btn-success flex-grow-1 shadow-sm">
-        บันทึก Item
-    </button>
-
-    <button type="reset"
-        class="btn btn-outline-secondary" id="item-reset">
-        ล้างฟอร์ม
-    </button>
-
-</div>
-
-</form>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- JavaScript Files -->
-<script src="js/samples.js"></script>
-<script src="js/app.js"></script>
+    <!-- JavaScript Files -->
+    <script src="js/samples.js"></script>
+    <script src="js/app.js"></script>
 
 </body>
+
 </html>
