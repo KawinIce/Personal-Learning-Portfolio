@@ -15,8 +15,8 @@
         <div>
             <a href="#"> Welcome!<span>Learning Portfolio</span></a>
             <div>
-                <button>โหลดข้อมูลตัวอย่าง</button>
-                <button>ล้างข้อมูลทั้งหมด</button>
+                <button id="btn-sample">โหลดข้อมูลตัวอย่าง</button>
+                <button id="btn-clear">ล้างข้อมูลทั้งหมด</button>
             </div>
         </div>
     </nav>
@@ -27,34 +27,33 @@
             <!-- แถบจัดการข้อมูล -->
             <div>
                 <div>
-                    <h5>Portfolios <span>0</span></h5>
-                    <div></div>
-
+                    <h5>Portfolios <span id="portfolio-count">0</span></h5>
+                    <div id="portfolio-list">
+                        <!-- รายชื่อ Portfolio จะถูกเรนเดอร์ด้วย JS -->
+                    </div>
                     <hr>
 
                     <h6>สร้าง Portfolio ใหม่</h6>
-                    <form novalidate>
+                    <form id="portfolio-form" novalidate>
                         <div>
-                            <label>ชื่อที่ต้องการแสดง *</label>
-                            <input type="text" name="name" required
-                                placeholder="ชื่อจริง หรือชื่อสมมติ">
+                             <label for="name">ชื่อที่ต้องการแสดง *</label>
+                            <input type="text" id="name" name="name" required placeholder="ชื่อจริง หรือชื่อสมมติ">
                             <div></div>
                         </div>
                         <div>
-                            <label>What I Enjoy *</label>
-                            <textarea name="enjoy" rows="2" required
-                                placeholder="ชอบทำอะไร..."></textarea>
+                            <label for="enjoy">What I Enjoy *</label>
+                            <textarea id="enjoy" name="enjoy" rows="2" required placeholder="ชอบทำอะไร..."></textarea>
                             <div></div>
                         </div>
                         <div>
-                            <label>What I've Tried *</label>
-                            <textarea name="tried" rows="2" required
+                            <label for="tried">What I've Tried *</label>
+                             <textarea id="tried" name="tried" rows="2" required
                                 placeholder="ลองทำอะไรมาแล้วบ้าง..."></textarea>
                             <div></div>
                         </div>
                         <div>
-                            <label>What I'm Curious About *</label>
-                            <textarea name="curious" rows="2" required
+                            <label for="curious">What I'm Curious About *</label>
+                            <textarea id="curious" name="curious" rows="2" required
                                 placeholder="สนใจอยากรู้อะไรเพิ่ม..."></textarea>
                             <div></div>
                         </div>
@@ -66,7 +65,7 @@
             <div>
 
                 <!-- ที่ว่างรอข้อมูล -->
-                <div>
+                <div id="empty-state">
                     <div>
                         <h4>ยังไม่มี Portfolio</h4>
                         <p>สร้าง Portfolio ทางซ้าย หรือกด “โหลดข้อมูลตัวอย่าง” ด้านบนเพื่อเริ่มต้นใช้งาน</p>
@@ -74,59 +73,60 @@
                 </div>
 
                 <!-- ลายละเอียด -->
-                <div style="display: none;">
+                <div id="portfolio-view" style="display: none;">
 
                     <!-- Profile กับ Card -->
                     <div>
                         <div>
                             <h3>-</h3>
-                            <button>ลบ Portfolio</button>
+                            <button id="btn-delete-portfolio">ลบ Portfolio</button>
                         </div>
                         <div>
                             <div>
                                 <strong>WHAT I ENJOY</strong>
-                                <span>-</span>
+                                <span id="v-enjoy">-</span>
                             </div>
                             <div>
                                 <strong>WHAT I'VE TRIED</strong>
-                                <span>-</span>
+                                <span id="v-tried">-</span>
                             </div>
                             <div>
                                 <strong>WHAT I'M CURIOUS ABOUT</strong>
-                                <span>-</span>
+                                <span id="v-curious">-</span>
                             </div>
                         </div>
 
                         <!-- JSON -->
                         <div>
-                            <button>แสดง/ซ่อน JSON</button>
-                            <button>คัดลอก JSON</button>
+                            <button id="btn-export">แสดง/ซ่อน JSON</button>
+                            <button id="btn-copy">คัดลอก JSON</button>
                         </div>
-                        <div hidden>
-                            <textarea rows="8" readonly></textarea>
+                        <div id="json-box" hidden>
+                           <textarea id="json-text" rows="8" readonly></textarea>
+                        </div>
                         </div>
                     </div>
 
                     <!-- Port Items -->
                     <div>
-                        <h5>Portfolio Items <span>0</span></h5>
-                        <div></div>
+                        <h5>Portfolio Items <span id="item-count">0</span></h5>
+                        <div id="item-list">
                     </div>
 
                     <!-- เพิ่ม Port -->
                     <div>
                         <h5>เพิ่ม Portfolio Item</h5>
-                        <form novalidate>
+                         <form id="item-form" novalidate>
                             <div>
                                 <div>
-                                    <label>Title *</label>
-                                    <input type="text" name="title" required
+                                    <label for="title">Title *</label>
+                                     <input type="text" id="title" name="title" required
                                         placeholder="ชื่อผลงานหรือกิจกรรม">
                                     <div></div>
                                 </div>
                                 <div>
-                                    <label>Type *</label>
-                                    <select name="type" required>
+                                    <label for="type">Type *</label>
+                                    <select id="type" name="type" required>
                                         <option value="">-- เลือกประเภท --</option>
                                         <option value="Course Assignment">Course Assignment</option>
                                         <option value="Project">Project</option>
@@ -136,30 +136,30 @@
                                     <div></div>
                                 </div>
                                 <div>
-                                    <label>Date *</label>
-                                    <input type="date" name="date" required>
+                                     <label for="date">Date *</label>
+                                    <input type="date" id="date" name="date" required>
                                     <div></div>
                                 </div>
                             </div>
 
                             <div>
                                 <div>
-                                    <label>Role *</label>
-                                    <input type="text" name="role" required
+                                    <label for="role">Role *</label>
+                                    <input type="text" id="role" name="role" required
                                         placeholder="เช่น Developer, Designer">
                                     <div></div>
                                 </div>
                                 <div>
-                                    <label>Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
-                                    <input type="text" name="skills" required
+                                    <label for="skills">Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                                    <input type="text" id="skills" name="skills" required
                                         placeholder="HTML, CSS, JavaScript">
                                     <div></div>
                                 </div>
                             </div>
 
                             <div>
-                                <label>Description *</label>
-                                <textarea name="description" rows="2" required
+                                <label for="description">Description *</label>
+                                <textarea id="description" name="description" rows="2" required
                                     placeholder="รายละเอียดภาพรวมของผลงาน..."></textarea>
                                 <div></div>
                             </div>
@@ -169,26 +169,25 @@
                                 <h6>Reflection</h6>
                                 <div>
                                     <div>
-                                        <label>What I did *</label>
-                                        <input type="text" name="whatIDid" required
+                                        <label for="whatIDid">What I did *</label>
+                                        <input type="text" id="whatIDid" name="whatIDid" required
                                             placeholder="สิ่งที่ได้ทำ">
                                         <div></div>
                                     </div>
                                     <div>
                                         <label>What I learned *</label>
-                                        <input type="text" name="whatILearned"
-                                            required placeholder="สิ่งที่ได้เรียนรู้">
+                                          <input type="text" id="whatILearned" name="whatILearned" required placeholder="สิ่งที่ได้เรียนรู้">
                                         <div></div>
                                     </div>
                                     <div>
-                                        <label>Challenge *</label>
-                                        <input type="text" name="challenge" required
+                                        <label for="challenge">Challenge *</label>
+                                        <input type="text" id="challenge" name="challenge" required
                                             placeholder="อุปสรรคหรือความท้าทาย">
                                         <div></div>
                                     </div>
                                     <div>
-                                        <label>Next step *</label>
-                                        <input type="text" name="nextStep" required
+                                        <label for="nextStep">Next step *</label>
+                                        <input type="text" id="nextStep" name="nextStep" required
                                             placeholder="ก้าวต่อไป">
                                         <div></div>
                                     </div>
@@ -196,15 +195,15 @@
                             </div>
 
                             <div>
-                                <label>Evidence URL * (ลิงก์หลักฐาน)</label>
-                                <textarea name="evidence" rows="2" required
+                                  <label for="evidence">Evidence URL * (ลิงก์หลักฐาน)</label>
+                                <textarea id="evidence" name="evidence" rows="2" required
                                     placeholder="https://example.com/my-work"></textarea>
                                 <div></div>
                             </div>
 
                             <div>
-                                <button type="submit">บันทึก Item</button>
-                                <button type="reset">ล้างฟอร์ม</button>
+                                 <button type="submit">บันทึก Item</button>
+                                <button type="reset" id="item-reset">ล้างฟอร์ม</button>
                             </div>
                         </form>
                     </div>
