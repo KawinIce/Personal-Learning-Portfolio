@@ -264,5 +264,34 @@ if (typeof document !== "undefined") {
         if (savePortfolios(portfolios)) { render(); showToast("ลบ Item แล้ว"); }
     }
 
+    /* Create New Portfolio */
+    $("#portfolio-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const values = formValues(form);
+        const errors = validatePortfolio(values);
+        showErrors(form, errors);
+        if (Object.keys(errors).length > 0) {
+            showToast("กรอกข้อมูลไม่ครบ ยังไม่ได้บันทึก", true);
+            return;
+        }
+        const p = {
+            id: "p-" + Date.now().toString(36),
+            name: values.name.trim(),
+            enjoy: values.enjoy.trim(),
+            tried: values.tried.trim(),
+            curious: values.curious.trim(),
+            items: []
+        };
+        portfolios.push(p);
+        if (savePortfolios(portfolios)) {
+            form.reset();
+            selectPortfolio(p.id);
+            showToast("สร้าง Portfolio แล้ว");
+        } else {
+            portfolios.pop();
+        }
+    });
+
     render();
 }
