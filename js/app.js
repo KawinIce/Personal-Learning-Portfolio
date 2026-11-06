@@ -293,5 +293,34 @@ if (typeof document !== "undefined") {
         }
     });
 
+    /* item */
+    $("#item-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const p = currentPortfolio();
+        if (!p) return;
+        const values = formValues(form);
+        const errors = validateItem(values);
+        showErrors(form, errors);
+        if (Object.keys(errors).length > 0) {
+            showToast("ข้อมูลไม่ถูกต้อง ยังไม่ได้บันทึก กรุณาตรวจสอบช่องที่แจ้งเตือน", true);
+            return;
+        }
+        const item = buildItem(values, nextItemId(p.items));
+        p.items.push(item);
+        if (savePortfolios(portfolios)) {
+            form.reset();
+            clearErrors(form);
+            render();
+            showToast("บันทึก Item แล้ว");
+        } else {
+            p.items.pop();
+        }
+    });
+
+    $("#item-reset").addEventListener("click", function () {
+        setTimeout(function () { clearErrors($("#item-form")); }, 0);
+    });
+
     render();
 }
