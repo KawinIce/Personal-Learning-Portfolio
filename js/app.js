@@ -322,5 +322,46 @@ if (typeof document !== "undefined") {
         setTimeout(function () { clearErrors($("#item-form")); }, 0);
     });
 
+    /* Error on input */
+    document.addEventListener("input", function (e) {
+        if (e.target.classList && e.target.classList.contains("is-invalid")) {
+            e.target.classList.remove("is-invalid");
+        }
+    });
+
+    /* Delete Portfolio */
+    let deleteArmed = false;
+    $("#btn-delete-portfolio").addEventListener("click", function (e) {
+        const btn = e.currentTarget;
+        if (!deleteArmed) {
+            deleteArmed = true;
+            btn.textContent = "กดอีกครั้งเพื่อยืนยันลบ";
+            setTimeout(function () { deleteArmed = false; btn.textContent = "ลบ Portfolio"; }, 3000);
+            return;
+        }
+        deleteArmed = false;
+        btn.textContent = "ลบ Portfolio";
+        portfolios = portfolios.filter(function (p) { return p.id !== selectedId; });
+        selectedId = portfolios.length ? portfolios[0].id : null;
+        if (savePortfolios(portfolios)) { render(); showToast("ลบ Portfolio แล้ว"); }
+    });
+
+    /* JSON view & copy */
+    $("#btn-export").addEventListener("click", function () {
+        const box = $("#json-box");
+        box.hidden = !box.hidden;
+    });
+    $("#btn-copy").addEventListener("click", function () {
+        const ta = $("#json-text");
+        ta.select();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(ta.value).then(
+                function () { showToast("คัดลอก JSON แล้ว"); },
+                function () { showToast("เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก"); }
+            );
+        } else {
+            showToast("เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก");
+        }
+    });
     render();
 }
