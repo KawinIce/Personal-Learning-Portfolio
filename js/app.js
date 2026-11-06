@@ -363,5 +363,41 @@ if (typeof document !== "undefined") {
             showToast("เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก");
         }
     });
+
+    /* Sample */
+    $("#btn-sample").addEventListener("click", function () {
+        const existing = new Set(portfolios.map(function (p) { return p.id; }));
+        if (window.SAMPLE_PORTFOLIOS) {
+            window.SAMPLE_PORTFOLIOS.forEach(function (s) {
+                if (!existing.has(s.id)) portfolios.push(JSON.parse(JSON.stringify(s)));
+            });
+        }
+        if (savePortfolios(portfolios)) {
+            if (window.SAMPLE_PORTFOLIOS && window.SAMPLE_PORTFOLIOS.length > 0) {
+                selectPortfolio(window.SAMPLE_PORTFOLIOS[0].id);
+            } else {
+                render();
+            }
+            showToast("โหลดข้อมูลตัวอย่างแล้ว");
+        }
+    });
+
+    /* Clear data */
+    let clearArmed = false;
+    $("#btn-clear").addEventListener("click", function (e) {
+        const btn = e.currentTarget;
+        if (!clearArmed) {
+            clearArmed = true;
+            btn.textContent = "กดอีกครั้งเพื่อยืนยัน";
+            setTimeout(function () { clearArmed = false; btn.textContent = "ล้างข้อมูลทั้งหมด"; }, 3000);
+            return;
+        }
+        clearArmed = false;
+        btn.textContent = "ล้างข้อมูลทั้งหมด";
+        portfolios = [];
+        selectedId = null;
+        if (savePortfolios(portfolios)) { render(); showToast("ล้างข้อมูลแล้ว"); }
+    });
+
     render();
 }
