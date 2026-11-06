@@ -93,21 +93,176 @@ if (typeof module !== "undefined") {
 /* ---------- Storage ---------- */
 
 function loadPortfolios() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const data = raw ? JSON.parse(raw) : [];
-    return Array.isArray(data) ? data : [];
-  } catch (e) {
-    return [];
-  }
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const data = raw ? JSON.parse(raw) : [];
+        return Array.isArray(data) ? data : [];
+    } catch (e) {
+        return [];
+    }
 }
 
 function savePortfolios(list) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    return true;
-  } catch (e) {
-    showToast("บันทึกไม่สำเร็จ: Browser ไม่อนุญาตให้ใช้ localStorage", true);
-    return false;
-  }
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        return true;
+    } catch (e) {
+        showToast("บันทึกไม่สำเร็จ: Browser ไม่อนุญาตให้ใช้ localStorage", true);
+        return false;
+    }
+}
+
+/* ---------- Browser App ---------- */
+
+if (typeof document !== "undefined") {
+    let portfolios = loadPortfolios();
+    let selectedId = null;
+    try { selectedId = localStorage.getItem(SELECTED_KEY); } catch (e) { selectedId = null; }
+
+    const $ = function (sel) { return document.querySelector(sel); };
+
+    function showToast(message, isError) {
+        const el = document.createElement("div");
+        el.className = "toast-msg" + (isError ? " error" : "");
+        el.textContent = message;
+        $("#toast-area").appendChild(el);
+        setTimeout(function () { el.remove(); }, 3000);
+    }
+    window.showToast = showToast;
+
+    function formValues(form) {
+        const data = new FormData(form);
+        const out = {};
+        data.forEach(function (v, k) { out[k] = String(v); });
+        return out;
+    }
+
+    function showErrors(form, errors) {
+        form.querySelectorAll(".form-control, .form-select").forEach(function (el) {
+            const msg = errors[el.name];
+            el.classList.toggle("is-invalid", Boolean(msg));
+            const fb = el.parentElement.querySelector(".invalid-feedback");
+            if (fb) fb.textContent = msg || "";
+        });
+        const first = form.querySelector(".is-invalid");
+        if (first) first.focus();
+    }
+
+    function clearErrors(form) { showErrors(form, {}); }
+
+    function currentPortfolio() {
+        return portfolios.find(function (p) { return p.id === selectedId; }) || null;
+    }
+
+    function selectPortfolio(id) {
+        selectedId = id;
+        try { localStorage.setItem(SELECTED_KEY, id || ""); } catch (e) { /* ignore */ }
+        render();
+    }
+
+    function el(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+    }
+
+    function renderList() {
+        const box = $("#portfolio-list");
+        box.replaceChildren();
+        $("#portfolio-count").textContent = portfolios.length;
+        portfolios.forEach(function (p) {
+            const btn = el("button", "list-group-item list-group-item-action portfolio-item" + (p.id === selectedId ? " active" : ""));
+            btn.type = "button";
+            btn.appendChild(el("div", "fw-semibold", p.name));
+            btn.appendChild(el("small", "", p.items.length + " items"));
+            btn.addEventListener("click", function () { selectPortfolio(p.id); });
+            box.appendChild(btn);
+        });
+    }
+
+    function renderItem(item) {
+        const col = el("div", "col-md-6");
+        const card = el("article", "item-card");
+
+        card.appendChild(el("h3", "h6 fw-bold mb-1", item.title));
+        card.appendChild(el("div", "text-muted small mb-2", item.type + " · " + item.date + " · " + item.role));
+        card.appendChild(el("p", "small text-secondary mb-2", item.description));
+
+        const skills = el("div", "mb-2");
+        if (Array.isArray(item.skills)) {
+            item.skills.forEach(function (s) { skills.appendChild(el("span", "skill-chip", s)); });
+        }
+        card.appendChild(skills);
+
+        const dl = el("dl", "reflection mb-2");
+        const ref = item.reflection || {};
+        [
+            ["What I did", ref.whatIDid],
+            ["What I learned", ref.whatILearned],
+            ["Challenge", ref.challenge],
+            ["Next step", ref.nextStep]
+        ].forEach(function (pair) {
+            if (pair[1]) {
+                dl.appendChild(el("dt", "", pair[0]));
+                dl.appendChild(el("dd", "", pair[1]));
+            }
+        });
+        card.appendChild(dl);
+
+        const ul = el("ul", "evidence-list");
+        if (Array.isArray(item.evidence)) {
+            item.evidence.forEach(function (url) {
+                const li = el("li");
+                const a = el("a", "", url);
+                a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+        }
+        card.appendChild(el("div", "text-muted small fw-semibold mt-2", "Evidence"));
+        card.appendChild(ul);
+
+        const del = el("button", "btn btn-sm btn-outline-danger mt-3", "ลบ Item");
+        del.type = "button";
+        del.addEventListener("click", function () { deleteItem(item.id); });
+        card.appendChild(del);
+
+        col.appendChild(card);
+        return col;
+    }
+
+    function render() {
+        if (!currentPortfolio() && portfolios.length > 0) {
+            selectedId = portfolios[0].id;
+        }
+        renderList();
+        const p = currentPortfolio();
+        $("#empty-state").hidden = Boolean(p);
+        $("#portfolio-view").style.display = p ? "block" : "none";
+        if (!p) return;
+
+        $("#v-name").textContent = p.name;
+        $("#v-enjoy").textContent = p.enjoy;
+        $("#v-tried").textContent = p.tried;
+        $("#v-curious").textContent = p.curious;
+        $("#item-count").textContent = p.items.length;
+
+        const list = $("#item-list");
+        list.replaceChildren();
+        if (p.items.length === 0) {
+            list.appendChild(el("p", "text-body-secondary mb-0 col-12 text-center py-3 small", "ยังไม่มี Item ใน Portfolio นี้ ลองเพิ่มจากฟอร์มด้านล่าง"));
+        }
+        p.items.forEach(function (it) { list.appendChild(renderItem(it)); });
+        $("#json-text").value = JSON.stringify(p, null, 2);
+    }
+
+    function deleteItem(itemId) {
+        const p = currentPortfolio();
+        if (!p) return;
+        p.items = p.items.filter(function (it) { return it.id !== itemId; });
+        if (savePortfolios(portfolios)) { render(); showToast("ลบ Item แล้ว"); }
+    }
+
+    render();
 }
