@@ -89,3 +89,25 @@ function nextItemId(items) {
 if (typeof module !== "undefined") {
     module.exports = { isValidUrl, isValidDate, validatePortfolio, validateItem, buildItem, nextItemId };
 }
+
+/* ---------- Storage ---------- */
+
+function loadPortfolios() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function savePortfolios(list) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    return true;
+  } catch (e) {
+    showToast("บันทึกไม่สำเร็จ: Browser ไม่อนุญาตให้ใช้ localStorage", true);
+    return false;
+  }
+}
