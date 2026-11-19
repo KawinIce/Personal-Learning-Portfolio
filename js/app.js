@@ -1,4 +1,3 @@
-const STORAGE_KEY = "powerup.portfolios";
 const SELECTED_KEY = "powerup.selectedPortfolio";
 
 /* ---------- Validation Function ---------- */
@@ -86,28 +85,37 @@ function nextItemId(items) {
     return "item" + String(max + 1).padStart(3, "0");
 }
 
-if (typeof module !== "undefined") {
-    module.exports = { isValidUrl, isValidDate, validatePortfolio, validateItem, buildItem, nextItemId };
-}
+/* ---------- Server Storage (PHP API) ---------- */
 
-/* ---------- Storage ---------- */
-
-function loadPortfolios() {
+async function fetchPortfoliosFromServer() {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const data = raw ? JSON.parse(raw) : [];
+        const res = await fetch("api.php", { cache: "no-store" });
+        if (!res.ok) throw new Error("โหลดข้อมูลจาก Server ไม่สำเร็จ");
+        const data = await res.json();
         return Array.isArray(data) ? data : [];
     } catch (e) {
+        if (typeof showToast === "function") {
+            showToast("เชื่อมต่อ Server ไม่ได้ กรุณาตรวจสอบไฟล์ api.php", true);
+        }
         return [];
     }
 }
 
-function savePortfolios(list) {
+async function savePortfoliosToServer(list) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        const res = await fetch("api.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(list)
+        });
+        const result = await res.json();
+        if (!res.ok || result.status !== "success") {
+            showToast(result.message || "บันทึกข้อมูลลง Server ไม่สำเร็จ", true);
+            return false;
+        }
         return true;
     } catch (e) {
-        showToast("บันทึกไม่สำเร็จ: Browser ไม่อนุญาตให้ใช้ localStorage", true);
+        showToast("เกิดข้อผิดพลาดในการส่งข้อมูลไปที่ Server", true);
         return false;
     }
 }
@@ -115,8 +123,10 @@ function savePortfolios(list) {
 /* ---------- Browser App ---------- */
 
 if (typeof document !== "undefined") {
-    let portfolios = loadPortfolios();
+    let portfolios = [];
     let selectedId = null;
+    let pendingImportedItem = null;
+
     try { selectedId = localStorage.getItem(SELECTED_KEY); } catch (e) { selectedId = null; }
 
     const $ = function (sel) { return document.querySelector(sel); };
@@ -126,7 +136,7 @@ if (typeof document !== "undefined") {
         el.className = "toast-msg" + (isError ? " error" : "");
         el.textContent = message;
         $("#toast-area").appendChild(el);
-        setTimeout(function () { el.remove(); }, 3000);
+        setTimeout(function () { el.remove(); }, 3500);
     }
     window.showToast = showToast;
 
@@ -223,11 +233,26 @@ if (typeof document !== "undefined") {
         card.appendChild(el("div", "text-muted small fw-semibold mt-2", "Evidence"));
         card.appendChild(ul);
 
-        const del = el("button", "btn btn-sm btn-outline-danger mt-3", "ลบ Item");
+        const btnGroup = el("div", "d-flex gap-2 mt-3");
+
+        const copyItemBtn = el("button", "btn btn-sm btn-outline-primary", "คัดลอก Item JSON");
+        copyItemBtn.type = "button";
+        copyItemBtn.addEventListener("click", function () {
+            const jsonStr = JSON.stringify(item, null, 2);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(jsonStr).then(function () {
+                    showToast("คัดลอก Item JSON สำหรับส่งต่อแล้ว");
+                });
+            }
+        });
+        btnGroup.appendChild(copyItemBtn);
+
+        const del = el("button", "btn btn-sm btn-outline-danger", "ลบ Item");
         del.type = "button";
         del.addEventListener("click", function () { deleteItem(item.id); });
-        card.appendChild(del);
+        btnGroup.appendChild(del);
 
+        card.appendChild(btnGroup);
         col.appendChild(card);
         return col;
     }
@@ -251,21 +276,27 @@ if (typeof document !== "undefined") {
         const list = $("#item-list");
         list.replaceChildren();
         if (p.items.length === 0) {
-            list.appendChild(el("p", "text-body-secondary mb-0 col-12 text-center py-3 small", "ยังไม่มี Item ใน Portfolio นี้ ลองเพิ่มจากฟอร์มด้านล่าง"));
+            list.appendChild(el("p", "text-body-secondary mb-0 col-12 text-center py-3 small", "ยังไม่มี Item ใน Portfolio นี้ ลองเพิ่มจากฟอร์มด้านล่าง หรือนำเข้าจากบูธเพื่อน"));
         }
         p.items.forEach(function (it) { list.appendChild(renderItem(it)); });
         $("#json-text").value = JSON.stringify(p, null, 2);
     }
 
-    function deleteItem(itemId) {
+    async function deleteItem(itemId) {
         const p = currentPortfolio();
         if (!p) return;
+        const backup = [...p.items];
         p.items = p.items.filter(function (it) { return it.id !== itemId; });
-        if (savePortfolios(portfolios)) { render(); showToast("ลบ Item แล้ว"); }
+        if (await savePortfoliosToServer(portfolios)) {
+            render();
+            showToast("ลบ Item และอัปเดตบน Server แล้ว");
+        } else {
+            p.items = backup;
+        }
     }
 
     /* Create New Portfolio */
-    $("#portfolio-form").addEventListener("submit", function (event) {
+    $("#portfolio-form").addEventListener("submit", async function (event) {
         event.preventDefault();
         const form = event.currentTarget;
         const values = formValues(form);
@@ -284,17 +315,17 @@ if (typeof document !== "undefined") {
             items: []
         };
         portfolios.push(p);
-        if (savePortfolios(portfolios)) {
+        if (await savePortfoliosToServer(portfolios)) {
             form.reset();
             selectPortfolio(p.id);
-            showToast("สร้าง Portfolio แล้ว");
+            showToast("สร้าง Portfolio และบันทึกลง Server แล้ว");
         } else {
             portfolios.pop();
         }
     });
 
-    /* item */
-    $("#item-form").addEventListener("submit", function (event) {
+    /* Add Item */
+    $("#item-form").addEventListener("submit", async function (event) {
         event.preventDefault();
         const form = event.currentTarget;
         const p = currentPortfolio();
@@ -308,11 +339,11 @@ if (typeof document !== "undefined") {
         }
         const item = buildItem(values, nextItemId(p.items));
         p.items.push(item);
-        if (savePortfolios(portfolios)) {
+        if (await savePortfoliosToServer(portfolios)) {
             form.reset();
             clearErrors(form);
             render();
-            showToast("บันทึก Item แล้ว");
+            showToast("บันทึก Item ลง Server แล้ว");
         } else {
             p.items.pop();
         }
@@ -322,7 +353,6 @@ if (typeof document !== "undefined") {
         setTimeout(function () { clearErrors($("#item-form")); }, 0);
     });
 
-    /* Error on input */
     document.addEventListener("input", function (e) {
         if (e.target.classList && e.target.classList.contains("is-invalid")) {
             e.target.classList.remove("is-invalid");
@@ -331,7 +361,7 @@ if (typeof document !== "undefined") {
 
     /* Delete Portfolio */
     let deleteArmed = false;
-    $("#btn-delete-portfolio").addEventListener("click", function (e) {
+    $("#btn-delete-portfolio").addEventListener("click", async function (e) {
         const btn = e.currentTarget;
         if (!deleteArmed) {
             deleteArmed = true;
@@ -341,16 +371,23 @@ if (typeof document !== "undefined") {
         }
         deleteArmed = false;
         btn.textContent = "ลบ Portfolio";
+        const backup = [...portfolios];
         portfolios = portfolios.filter(function (p) { return p.id !== selectedId; });
         selectedId = portfolios.length ? portfolios[0].id : null;
-        if (savePortfolios(portfolios)) { render(); showToast("ลบ Portfolio แล้ว"); }
+        if (await savePortfoliosToServer(portfolios)) {
+            render();
+            showToast("ลบ Portfolio บน Server แล้ว");
+        } else {
+            portfolios = backup;
+        }
     });
 
-    /* JSON view & copy */
+    /* JSON view, copy & download my-portfolio.json */
     $("#btn-export").addEventListener("click", function () {
         const box = $("#json-box");
         box.hidden = !box.hidden;
     });
+
     $("#btn-copy").addEventListener("click", function () {
         const ta = $("#json-text");
         ta.select();
@@ -359,32 +396,159 @@ if (typeof document !== "undefined") {
                 function () { showToast("คัดลอก JSON แล้ว"); },
                 function () { showToast("เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก"); }
             );
+        }
+    });
+
+    $("#btn-download-my-portfolio").addEventListener("click", function () {
+        const p = currentPortfolio();
+        if (!p) return;
+        const blob = new Blob([JSON.stringify(p, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "my-portfolio.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("ดาวน์โหลดไฟล์ my-portfolio.json สำเร็จ");
+    });
+
+    /* ---------- Import Portfolio Item JSON Modal ---------- */
+    $("#btn-import").addEventListener("click", function () {
+        $("#import-json-input").value = "";
+        $("#import-preview-section").hidden = true;
+        $("#btn-confirm-import").disabled = true;
+        pendingImportedItem = null;
+
+        const select = $("#import-target-portfolio");
+        select.replaceChildren();
+        portfolios.forEach(function (p) {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = p.name + " (" + p.id + ")";
+            if (p.id === selectedId) opt.selected = true;
+            select.appendChild(opt);
+        });
+    });
+
+    $("#btn-parse-json").addEventListener("click", function () {
+        const raw = $("#import-json-input").value.trim();
+        if (!raw) {
+            showToast("กรุณาวางข้อความ JSON ก่อนตรวจสอบ", true);
+            return;
+        }
+
+        let obj;
+        try {
+            obj = JSON.parse(raw);
+        } catch (e) {
+            showToast("JSON ผิดรูปแบบ (Syntax Error) กรุณาตรวจสอบเครื่องหมายปีกกาหรือลูกน้ำ", true);
+            return;
+        }
+
+        if (!obj || typeof obj !== "object" || Array.isArray(obj)) {
+            showToast("ข้อมูลต้องเป็น JSON Object ของ Portfolio Item 1 รายการ", true);
+            return;
+        }
+        if (!obj.id || !obj.title || !obj.type || !obj.date || !obj.role || !obj.description) {
+            showToast("ข้อมูลไม่ครบ: ต้องมี id, title, type, date, role และ description", true);
+            return;
+        }
+        if (!obj.reflection || typeof obj.reflection !== "object") {
+            showToast("ข้อมูลไม่ครบ: ไม่พบส่วน reflection", true);
+            return;
+        }
+        if (!Array.isArray(obj.evidence) || obj.evidence.length === 0 || !obj.evidence.every(isValidUrl)) {
+            showToast("ข้อมูลไม่ถูกต้อง: evidence ต้องมีลิงก์ URL อย่างน้อย 1 ลิงก์", true);
+            return;
+        }
+
+        pendingImportedItem = obj;
+        $("#import-item-summary").textContent = "พบรายการ: " + obj.title + " (" + obj.type + " | ID: " + obj.id + ")";
+        $("#imp-whatIDid").value = obj.reflection.whatIDid || "";
+        $("#imp-whatILearned").value = obj.reflection.whatILearned || "";
+        $("#imp-challenge").value = obj.reflection.challenge || "";
+        $("#imp-nextStep").value = obj.reflection.nextStep || "";
+
+        $("#import-preview-section").hidden = false;
+        $("#btn-confirm-import").disabled = false;
+    });
+
+    $("#btn-confirm-import").addEventListener("click", async function () {
+        if (!pendingImportedItem) return;
+        const targetId = $("#import-target-portfolio").value;
+        const targetPortfolio = portfolios.find(function (p) { return p.id === targetId; });
+
+        if (!targetPortfolio) {
+            showToast("ไม่พบ Portfolio ปลายทาง", true);
+            return;
+        }
+
+        const isDuplicate = targetPortfolio.items.some(function (it) { return it.id === pendingImportedItem.id; });
+        if (isDuplicate) {
+            showToast("ไม่สามารถนำเข้าได้: มีรายการ ID '" + pendingImportedItem.id + "' อยู่ใน Portfolio นี้แล้ว", true);
+            return;
+        }
+
+        const wDid = $("#imp-whatIDid").value.trim();
+        const wLearned = $("#imp-whatILearned").value.trim();
+        const chal = $("#imp-challenge").value.trim();
+        const nextS = $("#imp-nextStep").value.trim();
+
+        if (!wDid || !wLearned || !chal || !nextS) {
+            showToast("กรุณากรอก Reflection ให้ครบทั้ง 4 ช่องก่อนบันทึก", true);
+            return;
+        }
+
+        const itemToSave = JSON.parse(JSON.stringify(pendingImportedItem));
+        itemToSave.reflection = {
+            whatIDid: wDid,
+            whatILearned: wLearned,
+            challenge: chal,
+            nextStep: nextS
+        };
+
+        targetPortfolio.items.push(itemToSave);
+        if (await savePortfoliosToServer(portfolios)) {
+            const modalEl = $("#importModal");
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+
+            selectPortfolio(targetPortfolio.id);
+            showToast("นำเข้าและบันทึก Item ลง Server สำเร็จ!");
         } else {
-            showToast("เลือกข้อความแล้ว กด Ctrl+C เพื่อคัดลอก");
+            targetPortfolio.items.pop();
         }
     });
 
     /* Sample */
-    $("#btn-sample").addEventListener("click", function () {
+    $("#btn-sample").addEventListener("click", async function () {
         const existing = new Set(portfolios.map(function (p) { return p.id; }));
+        let added = false;
         if (window.SAMPLE_PORTFOLIOS) {
             window.SAMPLE_PORTFOLIOS.forEach(function (s) {
-                if (!existing.has(s.id)) portfolios.push(JSON.parse(JSON.stringify(s)));
+                if (!existing.has(s.id)) {
+                    portfolios.push(JSON.parse(JSON.stringify(s)));
+                    added = true;
+                }
             });
         }
-        if (savePortfolios(portfolios)) {
+        if (!added) {
+            showToast("ข้อมูลตัวอย่างถูกโหลดไว้แล้ว");
+            return;
+        }
+        if (await savePortfoliosToServer(portfolios)) {
             if (window.SAMPLE_PORTFOLIOS && window.SAMPLE_PORTFOLIOS.length > 0) {
                 selectPortfolio(window.SAMPLE_PORTFOLIOS[0].id);
             } else {
                 render();
             }
-            showToast("โหลดข้อมูลตัวอย่างแล้ว");
+            showToast("โหลดข้อมูลตัวอย่างและบันทึกลง Server แล้ว");
         }
     });
 
     /* Clear data */
     let clearArmed = false;
-    $("#btn-clear").addEventListener("click", function (e) {
+    $("#btn-clear").addEventListener("click", async function (e) {
         const btn = e.currentTarget;
         if (!clearArmed) {
             clearArmed = true;
@@ -394,10 +558,20 @@ if (typeof document !== "undefined") {
         }
         clearArmed = false;
         btn.textContent = "ล้างข้อมูลทั้งหมด";
+        const backup = [...portfolios];
         portfolios = [];
         selectedId = null;
-        if (savePortfolios(portfolios)) { render(); showToast("ล้างข้อมูลแล้ว"); }
+        if (await savePortfoliosToServer(portfolios)) {
+            render();
+            showToast("ล้างข้อมูลบน Server แล้ว");
+        } else {
+            portfolios = backup;
+        }
     });
 
-    render();
+    // เริ่มต้นโหลดข้อมูลจาก Server ทันทีที่เปิดหน้าเว็บ
+    (async function init() {
+        portfolios = await fetchPortfoliosFromServer();
+        render();
+    })();
 }
