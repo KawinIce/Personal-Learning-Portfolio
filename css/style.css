@@ -7,6 +7,10 @@ body {
     background: linear-gradient(135deg, #3b91e7, #34495e);
 }
 
+.text-muted{
+    margin-top: 0;
+}
+
 .card {
     border: none;
     border-radius: 12px;
