@@ -95,7 +95,7 @@ async function fetchPortfoliosFromServer() {
         return Array.isArray(data) ? data : [];
     } catch (e) {
         if (typeof showToast === "function") {
-            showToast("เชื่อมต่อ Server ไม่ได้ กรุณาตรวจสอบไฟล์ api.php", true);
+            showToast("เชื่อมต่อ PHP Server ไม่สำเร็จ กรุณาเปิดใช้งานผ่าน Web Server ที่รองรับ PHP (เช่น AWS EC2 หรือ localhost)", true);
         }
         return [];
     }
@@ -115,7 +115,9 @@ async function savePortfoliosToServer(list) {
         }
         return true;
     } catch (e) {
-        showToast("เกิดข้อผิดพลาดในการส่งข้อมูลไปที่ Server", true);
+        if (typeof showToast === "function") {
+            showToast("เชื่อมต่อ PHP Server ไม่สำเร็จ กรุณาเปิดใช้งานผ่าน Web Server ที่รองรับ PHP (เช่น AWS EC2 หรือ localhost)", true);
+        }
         return false;
     }
 }
