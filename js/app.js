@@ -85,42 +85,44 @@ function nextItemId(items) {
     return "item" + String(max + 1).padStart(3, "0");
 }
 
-/* ---------- Server Storage (PHP API) ---------- */
+/* ---------- Server Storage (PHP API) - Temporarily Disabled for Static Preview ---------- */
 
 async function fetchPortfoliosFromServer() {
-    try {
-        const res = await fetch("api.php", { cache: "no-store" });
-        if (!res.ok) throw new Error("โหลดข้อมูลจาก Server ไม่สำเร็จ");
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-    } catch (e) {
-        if (typeof showToast === "function") {
-            showToast("เชื่อมต่อ Server ไม่ได้ กรุณาตรวจสอบไฟล์ api.php", true);
-        }
-        return [];
-    }
+    // TODO: เปิดเรียก api.php กลับเมื่อพร้อมเชื่อมกับ Server / EC2
+    // try {
+    //     const res = await fetch("api.php", { cache: "no-store" });
+    //     if (!res.ok) throw new Error("โหลดข้อมูลจาก Server ไม่สำเร็จ");
+    //     const data = await res.json();
+    //     return Array.isArray(data) ? data : [];
+    // } catch (e) {
+    //     if (typeof showToast === "function") {
+    //         showToast("เชื่อมต่อ Server ไม่ได้ กรุณาตรวจสอบไฟล์ api.php", true);
+    //     }
+    //     return [];
+    // }
+    return [];
 }
 
 async function savePortfoliosToServer(list) {
-    try {
-        const res = await fetch("api.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(list)
-        });
-        const result = await res.json();
-        if (!res.ok || result.status !== "success") {
-            showToast(result.message || "บันทึกข้อมูลลง Server ไม่สำเร็จ", true);
-            return false;
-        }
-        return true;
-    } catch (e) {
-        showToast("เกิดข้อผิดพลาดในการส่งข้อมูลไปที่ Server", true);
-        return false;
-    }
+    // TODO: เปิดส่งข้อมูลไป api.php กลับเมื่อพร้อมเชื่อมกับ Server / EC2
+    // try {
+    //     const res = await fetch("api.php", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify(list)
+    //     });
+    //     const result = await res.json();
+    //     if (!res.ok || result.status !== "success") {
+    //         showToast(result.message || "บันทึกข้อมูลลง Server ไม่สำเร็จ", true);
+    //         return false;
+    //     }
+    //     return true;
+    // } catch (e) {
+    //     showToast("เกิดข้อผิดพลาดในการส่งข้อมูลไปที่ Server", true);
+    //     return false;
+    // }
+    return true;
 }
-
-/* ---------- Browser App ---------- */
 
 if (typeof document !== "undefined") {
     let portfolios = [];
