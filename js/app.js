@@ -131,6 +131,103 @@ if (typeof document !== "undefined") {
 
     const $ = function (sel) { return document.querySelector(sel); };
 
+    /* สร้าง Modal แก้ไขให้อัตโนมัติ (ทำงานได้ทันทีโดยไม่ต้องแก้ index.html) */
+    function ensureEditModal() {
+        if ($("#editItemModal")) return;
+        const modalHtml = `
+        <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="edit-item-form" class="needs-validation" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title fw-bold" id="editItemModalLabel">แก้ไข Portfolio Item</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="edit-item-id">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit-title" class="form-label small fw-semibold">Title *</label>
+                                    <input type="text" class="form-control" id="edit-title" name="title" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="edit-type" class="form-label small fw-semibold">Type *</label>
+                                    <select class="form-select" id="edit-type" name="type" required>
+                                        <option value="">-- เลือกประเภท --</option>
+                                        <option value="Course Assignment">Course Assignment</option>
+                                        <option value="Project">Project</option>
+                                        <option value="Activity">Activity</option>
+                                        <option value="Self-Learning">Self-Learning</option>
+                                    </select>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="edit-date" class="form-label small fw-semibold">Date *</label>
+                                    <input type="date" class="form-control" id="edit-date" name="date" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="edit-role" class="form-label small fw-semibold">Role *</label>
+                                    <input type="text" class="form-control" id="edit-role" name="role" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="edit-skills" class="form-label small fw-semibold">Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                                    <input type="text" class="form-control" id="edit-skills" name="skills" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit-description" class="form-label small fw-semibold">Description *</label>
+                                <textarea class="form-control" id="edit-description" name="description" rows="2" required></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="p-3 bg-light rounded-3 mb-3">
+                                <h6 class="small fw-bold text-secondary mb-3">Reflection</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="edit-whatIDid" class="form-label small text-muted">What I did *</label>
+                                        <input type="text" class="form-control" id="edit-whatIDid" name="whatIDid" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit-whatILearned" class="form-label small text-muted">What I learned *</label>
+                                        <input type="text" class="form-control" id="edit-whatILearned" name="whatILearned" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit-challenge" class="form-label small text-muted">Challenge *</label>
+                                        <input type="text" class="form-control" id="edit-challenge" name="challenge" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="edit-nextStep" class="form-label small text-muted">Next step *</label>
+                                        <input type="text" class="form-control" id="edit-nextStep" name="nextStep" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="edit-evidence" class="form-label small fw-semibold">Evidence URL * (ลิงก์หลักฐาน)</label>
+                                <textarea class="form-control" id="edit-evidence" name="evidence" rows="2" required></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+                            <button type="submit" class="btn btn-warning btn-sm fw-semibold">บันทึกการแก้ไข</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML("beforeend", modalHtml);
+    }
+    ensureEditModal();
+
     function showToast(message, isError) {
         const el = document.createElement("div");
         el.className = "toast-msg" + (isError ? " error" : "");
@@ -192,6 +289,7 @@ if (typeof document !== "undefined") {
     }
 
     function openEditItemModal(item) {
+        ensureEditModal();
         const form = $("#edit-item-form");
         clearErrors(form);
 
@@ -272,7 +370,7 @@ if (typeof document !== "undefined") {
         });
         btnGroup.appendChild(copyItemBtn);
 
-        const editBtn = el("button", "btn btn-sm btn-outline-warning", "แก้ไข Item");
+        const editBtn = el("button", "btn btn-sm btn-outline-warning", "แก้ไข");
         editBtn.type = "button";
         editBtn.addEventListener("click", function () { openEditItemModal(item); });
         btnGroup.appendChild(editBtn);
@@ -410,7 +508,7 @@ if (typeof document !== "undefined") {
             if (modalInstance) modalInstance.hide();
 
             render();
-            showToast("แก้ไข Item และบันทึกลง Server แล้ว");
+            showToast("แก้ไขและบันทึกข้อมูลลง Server แล้ว");
         } else {
             p.items[idx] = backup;
         }
