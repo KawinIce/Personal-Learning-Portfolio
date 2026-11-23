@@ -264,58 +264,104 @@
         </div>
     </div>
 
-    <!-- Modal นำเข้า Portfolio Item JSON -->
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <!-- Modal แก้ไข Portfolio Item -->
+    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="importModalLabel">นำเข้า Portfolio Item JSON (จากบูธ Challenge)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="import-json-input" class="form-label fw-semibold small">1. วางข้อความ JSON ที่ได้รับจากเจ้าของบูธ *</label>
-                        <textarea class="form-control font-monospace small" id="import-json-input" rows="5" placeholder='วางโค้ด JSON เช่น {"id": "item-ch01", "title": "...", ...}'></textarea>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-parse-json">ตรวจสอบข้อมูล JSON</button>
-                        </div>
+                <form id="edit-item-form" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="editItemModalLabel">แก้ไข Portfolio Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-item-id">
 
-                    <div id="import-preview-section" class="border-top pt-3" hidden>
-                        <div class="alert alert-success py-2 small mb-3" id="import-item-summary"></div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="edit-title" class="form-label small fw-semibold">Title *</label>
+                                <input type="text" class="form-control" id="edit-title" name="title" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="edit-type" class="form-label small fw-semibold">Type *</label>
+                                <select class="form-select" id="edit-type" name="type" required>
+                                    <option value="">-- เลือกประเภท --</option>
+                                    <option value="Course Assignment">Course Assignment</option>
+                                    <option value="Project">Project</option>
+                                    <option value="Activity">Activity</option>
+                                    <option value="Self-Learning">Self-Learning</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="edit-date" class="form-label small fw-semibold">Date *</label>
+                                <input type="date" class="form-control" id="edit-date" name="date" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="edit-role" class="form-label small fw-semibold">Role *</label>
+                                <input type="text" class="form-control" id="edit-role" name="role" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="edit-skills" class="form-label small fw-semibold">Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                                <input type="text" class="form-control" id="edit-skills" name="skills" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
 
                         <div class="mb-3">
-                            <label for="import-target-portfolio" class="form-label fw-semibold small">2. เลือก Portfolio ปลายทางที่จะบันทึก *</label>
-                            <select class="form-select" id="import-target-portfolio"></select>
+                            <label for="edit-description" class="form-label small fw-semibold">Description *</label>
+                            <textarea class="form-control" id="edit-description" name="description" rows="2" required></textarea>
+                            <div class="invalid-feedback"></div>
                         </div>
 
-                        <div class="p-3 bg-light rounded-3 mb-2">
-                            <h6 class="small fw-bold text-secondary mb-2">3. ตรวจสอบและแก้ไข Reflection ของคุณก่อนบันทึก *</h6>
-                            <div class="row g-2">
+                        <div class="p-3 bg-light rounded-3 mb-3">
+                            <h6 class="small fw-bold text-secondary mb-3">Reflection</h6>
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted">What I did *</label>
-                                    <input type="text" class="form-control form-control-sm" id="imp-whatIDid">
+                                    <label for="edit-whatIDid" class="form-label small text-muted">What I did *</label>
+                                    <input type="text" class="form-control" id="edit-whatIDid" name="whatIDid" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
+
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted">What I learned *</label>
-                                    <input type="text" class="form-control form-control-sm" id="imp-whatILearned">
+                                    <label for="edit-whatILearned" class="form-label small text-muted">What I learned *</label>
+                                    <input type="text" class="form-control" id="edit-whatILearned" name="whatILearned" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
+
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted">Challenge *</label>
-                                    <input type="text" class="form-control form-control-sm" id="imp-challenge">
+                                    <label for="edit-challenge" class="form-label small text-muted">Challenge *</label>
+                                    <input type="text" class="form-control" id="edit-challenge" name="challenge" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
+
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted">Next step *</label>
-                                    <input type="text" class="form-control form-control-sm" id="imp-nextStep">
+                                    <label for="edit-nextStep" class="form-label small text-muted">Next step *</label>
+                                    <input type="text" class="form-control" id="edit-nextStep" name="nextStep" required>
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="mb-2">
+                            <label for="edit-evidence" class="form-label small fw-semibold">Evidence URL * (ลิงก์หลักฐาน)</label>
+                            <textarea class="form-control" id="edit-evidence" name="evidence" rows="2" required></textarea>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-success btn-sm" id="btn-confirm-import" disabled>บันทึกลง Server</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-warning btn-sm fw-semibold">บันทึกการแก้ไข</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

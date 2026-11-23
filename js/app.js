@@ -191,6 +191,31 @@ if (typeof document !== "undefined") {
         });
     }
 
+    function openEditItemModal(item) {
+        const form = $("#edit-item-form");
+        clearErrors(form);
+
+        $("#edit-item-id").value = item.id;
+        $("#edit-title").value = item.title || "";
+        $("#edit-type").value = item.type || "";
+        $("#edit-date").value = item.date || "";
+        $("#edit-role").value = item.role || "";
+        $("#edit-skills").value = Array.isArray(item.skills) ? item.skills.join(", ") : "";
+        $("#edit-description").value = item.description || "";
+
+        const ref = item.reflection || {};
+        $("#edit-whatIDid").value = ref.whatIDid || "";
+        $("#edit-whatILearned").value = ref.whatILearned || "";
+        $("#edit-challenge").value = ref.challenge || "";
+        $("#edit-nextStep").value = ref.nextStep || "";
+
+        $("#edit-evidence").value = Array.isArray(item.evidence) ? item.evidence.join("\n") : "";
+
+        const modalEl = $("#editItemModal");
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modalInstance.show();
+    }
+
     function renderItem(item) {
         const col = el("div", "col-md-6");
         const card = el("article", "item-card");
@@ -233,7 +258,7 @@ if (typeof document !== "undefined") {
         card.appendChild(el("div", "text-muted small fw-semibold mt-2", "Evidence"));
         card.appendChild(ul);
 
-        const btnGroup = el("div", "d-flex gap-2 mt-3");
+        const btnGroup = el("div", "d-flex flex-wrap gap-2 mt-3");
 
         const copyItemBtn = el("button", "btn btn-sm btn-outline-primary", "คัดลอก Item JSON");
         copyItemBtn.type = "button";
@@ -246,6 +271,11 @@ if (typeof document !== "undefined") {
             }
         });
         btnGroup.appendChild(copyItemBtn);
+
+        const editBtn = el("button", "btn btn-sm btn-outline-warning", "แก้ไข Item");
+        editBtn.type = "button";
+        editBtn.addEventListener("click", function () { openEditItemModal(item); });
+        btnGroup.appendChild(editBtn);
 
         const del = el("button", "btn btn-sm btn-outline-danger", "ลบ Item");
         del.type = "button";
@@ -346,6 +376,43 @@ if (typeof document !== "undefined") {
             showToast("บันทึก Item ลง Server แล้ว");
         } else {
             p.items.pop();
+        }
+    });
+
+    /* Edit Item */
+    $("#edit-item-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const p = currentPortfolio();
+        if (!p) return;
+
+        const itemId = $("#edit-item-id").value;
+        const idx = p.items.findIndex(function (it) { return it.id === itemId; });
+        if (idx === -1) {
+            showToast("ไม่พบ Item ที่ต้องการแก้ไข", true);
+            return;
+        }
+
+        const values = formValues(form);
+        const errors = validateItem(values);
+        showErrors(form, errors);
+        if (Object.keys(errors).length > 0) {
+            showToast("ข้อมูลไม่ถูกต้อง ยังไม่ได้บันทึก กรุณาตรวจสอบช่องที่แจ้งเตือน", true);
+            return;
+        }
+
+        const backup = p.items[idx];
+        p.items[idx] = buildItem(values, itemId);
+
+        if (await savePortfoliosToServer(portfolios)) {
+            const modalEl = $("#editItemModal");
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+
+            render();
+            showToast("แก้ไข Item และบันทึกลง Server แล้ว");
+        } else {
+            p.items[idx] = backup;
         }
     });
 
