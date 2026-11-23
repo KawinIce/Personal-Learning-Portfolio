@@ -135,6 +135,102 @@ if (typeof document !== "undefined") {
 
   const $ = function (sel) { return document.querySelector(sel); };
 
+  function ensureEditModal() {
+    if ($("#editItemModal")) return;
+    const modalHtml = `
+    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form id="edit-item-form" class="needs-validation" novalidate>
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold" id="editItemModalLabel">แก้ไข Portfolio Item</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="edit-item-id">
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="edit-title" class="form-label small fw-semibold">Title *</label>
+                  <input type="text" class="form-control" id="edit-title" name="title" required>
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-md-3">
+                  <label for="edit-type" class="form-label small fw-semibold">Type *</label>
+                  <select class="form-select" id="edit-type" name="type" required>
+                    <option value="">-- เลือกประเภท --</option>
+                    <option value="Course Assignment">Course Assignment</option>
+                    <option value="Project">Project</option>
+                    <option value="Activity">Activity</option>
+                    <option value="Self-Learning">Self-Learning</option>
+                  </select>
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-md-3">
+                  <label for="edit-date" class="form-label small fw-semibold">Date *</label>
+                  <input type="date" class="form-control" id="edit-date" name="date" required>
+                  <div class="invalid-feedback"></div>
+                </div>
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="edit-role" class="form-label small fw-semibold">Role *</label>
+                  <input type="text" class="form-control" id="edit-role" name="role" required>
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-md-6">
+                  <label for="edit-skills" class="form-label small fw-semibold">Skills * (คั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                  <input type="text" class="form-control" id="edit-skills" name="skills" required>
+                  <div class="invalid-feedback"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="edit-description" class="form-label small fw-semibold">Description *</label>
+                <textarea class="form-control" id="edit-description" name="description" rows="2" required></textarea>
+                <div class="invalid-feedback"></div>
+              </div>
+              <div class="p-3 bg-light rounded-3 mb-3">
+                <h6 class="small fw-bold text-secondary mb-3">Reflection</h6>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="edit-whatIDid" class="form-label small text-muted">What I did *</label>
+                    <input type="text" class="form-control" id="edit-whatIDid" name="whatIDid" required>
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit-whatILearned" class="form-label small text-muted">What I learned *</label>
+                    <input type="text" class="form-control" id="edit-whatILearned" name="whatILearned" required>
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit-challenge" class="form-label small text-muted">Challenge *</label>
+                    <input type="text" class="form-control" id="edit-challenge" name="challenge" required>
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="edit-nextStep" class="form-label small text-muted">Next step *</label>
+                    <input type="text" class="form-control" id="edit-nextStep" name="nextStep" required>
+                    <div class="invalid-feedback"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label for="edit-evidence" class="form-label small fw-semibold">Evidence URL * (ลิงก์หลักฐาน)</label>
+                <textarea class="form-control" id="edit-evidence" name="evidence" rows="2" required></textarea>
+                <div class="invalid-feedback"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-warning btn-sm fw-semibold">บันทึกการแก้ไข</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+  }
+  ensureEditModal();
+
   function showToast(message, isError) {
     const el = document.createElement("div");
     el.className = "toast-msg" + (isError ? " error" : "");
@@ -201,6 +297,32 @@ if (typeof document !== "undefined") {
     });
   }
 
+  function openEditItemModal(item) {
+    ensureEditModal();
+    const form = $("#edit-item-form");
+    clearErrors(form);
+
+    $("#edit-item-id").value = item.id;
+    $("#edit-title").value = item.title || "";
+    $("#edit-type").value = item.type || "";
+    $("#edit-date").value = item.date || "";
+    $("#edit-role").value = item.role || "";
+    $("#edit-skills").value = Array.isArray(item.skills) ? item.skills.join(", ") : "";
+    $("#edit-description").value = item.description || "";
+
+    const ref = item.reflection || {};
+    $("#edit-whatIDid").value = ref.whatIDid || "";
+    $("#edit-whatILearned").value = ref.whatILearned || "";
+    $("#edit-challenge").value = ref.challenge || "";
+    $("#edit-nextStep").value = ref.nextStep || "";
+
+    $("#edit-evidence").value = Array.isArray(item.evidence) ? item.evidence.join("\n") : "";
+
+    const modalEl = $("#editItemModal");
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modalInstance.show();
+  }
+
   function renderItem(item) {
     const col = el("div", "col-md-6");
     const card = el("article", "item-card");
@@ -245,7 +367,7 @@ if (typeof document !== "undefined") {
     card.appendChild(el("div", "text-muted small fw-semibold mt-2", "Evidence"));
     card.appendChild(ul);
 
-    const btnGroup = el("div", "d-flex gap-2 mt-3");
+    const btnGroup = el("div", "d-flex flex-wrap gap-2 mt-3");
 
     const copyItemBtn = el("button", "btn btn-sm btn-outline-primary", "คัดลอก Item JSON");
     copyItemBtn.type = "button";
@@ -258,6 +380,11 @@ if (typeof document !== "undefined") {
       }
     });
     btnGroup.appendChild(copyItemBtn);
+
+    const editBtn = el("button", "btn btn-sm btn-outline-warning", "แก้ไข");
+    editBtn.type = "button";
+    editBtn.addEventListener("click", function () { openEditItemModal(item); });
+    btnGroup.appendChild(editBtn);
 
     const del = el("button", "btn btn-sm btn-outline-danger", "ลบ Item");
     del.type = "button";
@@ -358,6 +485,43 @@ if (typeof document !== "undefined") {
       showToast("บันทึก Item ลง Server แล้ว");
     } else {
       p.items.pop();
+    }
+  });
+
+  /* Edit Item */
+  $("#edit-item-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const p = currentPortfolio();
+    if (!p) return;
+
+    const itemId = $("#edit-item-id").value;
+    const idx = p.items.findIndex(function (it) { return it.id === itemId; });
+    if (idx === -1) {
+      showToast("ไม่พบ Item ที่ต้องการแก้ไข", true);
+      return;
+    }
+
+    const values = formValues(form);
+    const errors = validateItem(values);
+    showErrors(form, errors);
+    if (Object.keys(errors).length > 0) {
+      showToast("ข้อมูลไม่ถูกต้อง ยังไม่ได้บันทึก กรุณาตรวจสอบช่องที่แจ้งเตือน", true);
+      return;
+    }
+
+    const backup = p.items[idx];
+    p.items[idx] = buildItem(values, itemId);
+
+    if (await savePortfoliosToServer(portfolios)) {
+      const modalEl = $("#editItemModal");
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      if (modalInstance) modalInstance.hide();
+
+      render();
+      showToast("แก้ไขและบันทึกข้อมูลลง Server แล้ว");
+    } else {
+      p.items[idx] = backup;
     }
   });
 
