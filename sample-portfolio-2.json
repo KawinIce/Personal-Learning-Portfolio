@@ -41,6 +41,22 @@
       "evidence": [
         "https://example.com/budget-planner"
       ]
-    }
+    }, 
+    {
+        "id": "item003",
+        "title": "Challenge หมูหมากาไก่",
+        "type": "challenge group 2",
+        "date": "2026-11-24",
+        "role": "Player",
+        "description": "พูดตามรูปภาพที่ขึ้นให้ทันภายในเวลาที่กำหนด ทั้งหมด 5 รอบ",
+        "skills": ["Communication,Observation,Focusing"],
+        "reflection": {
+          "whatIDid": "พูดคำตามรูปภาพที่ขึ้นมาให้เห็นโดยพูดต่อกันตามจังหวะเพลงให้ครบทุกรูปภายในเวลาที่กำหนดทั้งหมด 5 รอบ",
+          "whatILearned": "การสังเกตุ,การจดจ่ออยุ่กับสิ่งที่เห็น,การพูด/การสื่อสาร,ไหวพริบ",
+          "challenge": "ความเร็วที่ต้องใช้ในการตอบตามจังหวะเพลงและพูดตามรูปที่ไม่ซ้ำกันเลย",
+          "nextStep": "พูดให้เร็วตามจังหวะและถูกต้อง/เพิ้มจำนวนรูปภาพ"
+        },
+        "evidence": ["https://drive.google.com/drive/folders/16bHr1DrizSEY2GAE3UhGjFUv_qNr6as8"]
+}
   ]
 }
